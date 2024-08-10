@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnviroWatch - NDVI Change Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- <script>
+        gsap.to(".hero", {
+            backgroundPosition: "100% 100%",
+            duration: 15,
+            repeat: -1,
+            ease: "linear"
+    });
+    </script> -->
+    <style>
+        @keyframes backgroundAnimation {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 100% 100%;
+    }
+}
+
+.hero {
+    background: linear-gradient(45deg, #156f03, #378504, #5ebf46, #118b04);
+    background-size: 400% 400%;
+    animation: backgroundAnimation 2s ease infinite;
+}
+
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <!-- Navbar -->
+    <nav class="bg-green-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold">EnviroWatch - HackOut'24</a>
+            <ul class="flex space-x-4">
+                <li><a href="#predict" class="hover:underline">Predict Changes</a></li>
+                <li><a href="#educate" class="hover:underline">Learn</a></li>
+                <li><a href="/ask1" class="hover:underline">Chatbot</a></li>
+                <li><a href="/guidance" class="hover:underline">Guidance</a></li>
+            </ul>
+        </div>
+    </nav>
+
+<header class="hero py-32 flex items-center justify-center text-center text-white bg-cover bg-center">
+    <div class="bg-opacity-50 bg-gray-800 p-8 rounded-lg">
+        <h1 class="text-4xl font-bold mb-4">Welcome to EnviroWatch - HackOut'24 <i class="fas fa-rocket"></i></h1>
+        <p class="text-xl mb-8">Explore the future of NDVI Change Detection with our advanced tools. <i class="fas fa-leaf"></i></p>
+        <a href="#predict" class="bg-green-600 hover:bg-green-800 text-white px-6 py-3 rounded-full text-lg transition-colors duration-300">Get Started <i class="fas fa-arrow-down"></i></a>
+    </div>
+</header>
+
+<section id="predict" class="py-16 bg-gray-100">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-10 text-center text-green-700">Upload Your Images</h2>
+        <form method="post" enctype="multipart/form-data" class="bg-white p-10 rounded-lg shadow-lg border border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <label for="b4_2014" class="block mb-6">
+                    <span class="block text-lg font-semibold mb-2 text-gray-800">B4 Year-1:</span>
+                    <input type="file" name="b4_2014" id="b4_2014" class="w-full border border-gray-300 rounded-lg shadow-sm p-2">
+                </label>
+                <label for="b5_2014" class="block mb-6">
+                    <span class="block text-lg font-semibold mb-2 text-gray-800">B5 Year-1:</span>
+                    <input type="file" name="b5_2014" id="b5_2014" class="w-full border border-gray-300 rounded-lg shadow-sm p-2">
+                </label>
+                <label for="b4_2019" class="block mb-6">
+                    <span class="block text-lg font-semibold mb-2 text-gray-800">B4 Year-2:</span>
+                    <input type="file" name="b4_2019" id="b4_2019" class="w-full border border-gray-300 rounded-lg shadow-sm p-2">
+                </label>
+                <label for="b5_2019" class="block mb-6">
+                    <span class="block text-lg font-semibold mb-2 text-gray-800">B5 Year-2:</span>
+                    <input type="file" name="b5_2019" id="b5_2019" class="w-full border border-gray-300 rounded-lg shadow-sm p-2">
+                </label>
+            </div>
+            <div class="flex justify-between mt-8 space-x-4">
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2">
+                    <i class="fas fa-check"></i>
+                    <span>Submit</span>
+                </button>
+                <form method="POST" action="{{ url_for('clear_files') }}" class="flex items-center">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2">
+                        <i class="fas fa-trash"></i>
+                        <span>Clear Files</span>
+                    </button>
+                </form>
+            </div>
+        </form>
+        {% if ndvi_2014_png and ndvi_2019_png %}
+        <div class="flex flex-col md:flex-row justify-center mt-16 space-y-8 md:space-y-0 md:space-x-8">
+            <div class="text-center">
+                <h3 class="text-2xl font-semibold mb-2 text-blue-600">Year: {{ ndvi_2014_year }}</h3>
+                <img src="{{ ndvi_2014_png }}" alt="NDVI 2014" class="border-2 border-blue-600 rounded-lg shadow-lg">
+            </div>
+            <div class="text-center">
+                <h3 class="text-2xl font-semibold mb-2 text-blue-600">Year: {{ ndvi_2019_year }}</h3>
+                <img src="{{ ndvi_2019_png }}" alt="NDVI 2019" class="border-2 border-blue-600 rounded-lg shadow-lg">
+            </div>
+        </div>
+        <form action="{{ url_for('result') }}" class="mt-8 text-center">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2">
+                <i class="fas fa-image"></i>
+                <span>Show Change Image</span>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</section>
+
+    <!-- Educate Section -->
+<section id="educate" class="py-16 bg-green-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-8 text-center text-green-600">Learn About NDVI Change Detection</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                <i class="fas fa-leaf fa-3x text-green-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">What is NDVI?</h3>
+                <p class="text-lg mb-4">NDVI (Normalized Difference Vegetation Index) is a valuable tool for monitoring vegetation health and changes over time. By analyzing NDVI images, you can gain insights into plant health, land use changes, and environmental conditions.</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                <i class="fas fa-chart-line fa-3x text-green-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">NDVI Values</h3>
+                <p class="text-lg mb-4">NDVI values range from -1 to 1, where higher values indicate healthier vegetation. By comparing NDVI images from different years, you can detect changes in vegetation and assess trends over time.</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+                <i class="fas fa-info-circle fa-3x text-green-500 mb-4"></i>
+                <h3 class="text-xl font-semibold mb-2">Applications</h3>
+                <p class="text-lg">This section provides resources and information on how NDVI change detection can be applied to various fields, such as agriculture, forestry, and environmental monitoring.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer -->
+    <footer class="bg-green-600 text-white py-4">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 EnviroWatch - HackOut'24. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

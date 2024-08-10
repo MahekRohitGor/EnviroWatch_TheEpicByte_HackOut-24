@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+         #chat-history {
+ max-height: 400px;
+overflow-y: auto;
+padding: 10px;
+border-bottom: 1px solid #ccc;
+}
+ .message {
+ margin: 5px 0;
+ padding: 10px;
+ border-radius: 4px;
+}
+.user {
+ background-color: #e0f7fa;
+ text-align: right;
+ }
+.bot {
+ background-color: #f1f8e9;
+ text-align: left;
+ }
+.input-container {
+ display: flex;
+ padding: 10px;
+}
+textarea {
+flex: 1;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
+margin-right: 10px;
+}
+button {
+padding: 10px 20px;
+border: none;
+background-color: #00796b;
+color: white;
+border-radius: 4px;
+ cursor: pointer;
+}
+button:hover {
+ background-color: #004d40;
+ }
+ #loading {
+ margin-top: 10px;
+      color: #00796b;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat-history"></div>
+    <div class="input-container">
+      <textarea id="user-message" placeholder="Type your message"></textarea>
+      <button onclick="sendMessage()">Send</button>
+      <div id="loading" style="display: none;">Loading...</div>
+    </div>
+  </div>
+  <script>
+    const chatHistory = document.getElementById('chat-history');
+    const userMessage = document.getElementById('user-message');
+    const loadingIndicator = document.getElementById('loading');
+
+    async function sendMessage() {
+      const message = userMessage.value.trim();
+      if (message === '') return;
+
+      // Clear previous message
+      userMessage.value = '';
+
+      // Display user message
+      appendMessage('user', message);
+
+      // Show loading indicator
+      loadingIndicator.style.display = 'block';
+
+      try {
+        const response = await fetch('/ask', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message })
+        });
+
+const data = await response.json();
+if (response.ok) {
+appendMessage('bot', data.response);
+} else {
+ appendMessage('bot', 'An error occurred.');
+console.error(data.error);
+ }
+} catch (error) { 
+    appendMessage('bot', 'An error occurred.') 
+    console.error(error);
+}
+finally {
+    // Hide loading indicator 
+    loadingIndicator.style.display = 'none';
+ }
+}
+
+function appendMessage(sender, text) {
+ const message = document.createElement('div');
+ message.classList.add('message', sender);
+ message.textContent = text;
+ chatHistory.appendChild(message);
+ chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to bottom
+}
+</script>
+</body>
+</html>
