@@ -236,5 +236,9 @@ def extract_year(filename):
             return year
     return None
 
+@app.route('/guidance', methods=['GET', 'POST'])
+def guidance():
+    return render_template('guidance.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
