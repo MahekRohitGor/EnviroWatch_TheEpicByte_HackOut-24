@@ -98,10 +98,8 @@
 
         <!-- Explanation of Result -->
         <div class="explanation">
-            <h2 class="text-xl font-bold mb-4">What Does the Result Indicate?</h2>
-            <p><i class="fas fa-leaf text-green-600"></i> The NDVI Change result displayed above represents the difference in vegetation health between the two years you selected.</p>
-            <p><i class="fas fa-arrow-up text-green-600"></i> Areas with positive NDVI change indicate an increase in vegetation health, whereas <i class="fas fa-arrow-down text-red-600"></i> negative values suggest a decline.</p>
-            <p><i class="fas fa-seedling text-green-600"></i> This analysis helps in understanding the impact of environmental factors, land use changes, and agricultural practices over time.</p>
+            <h2 class="text-xl font-bold mb-4">AI Powered Analysis</h2>
+            {{ response_text|safe}}
         </div>
     </div>
 
